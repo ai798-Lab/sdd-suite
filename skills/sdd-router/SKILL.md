@@ -27,7 +27,7 @@ ls docs/sdd/<slug>/ 2>/dev/null
 | 无 | 从零开始 | `discover-spec`(先把需求问清楚) |
 | 已有 `spec.md`(已批准),无设计稿 | 需求已定 | **出设计** → 把 spec + 参考 design.md + 风格偏好喂外部 AI 设计工具(Codex Product Design / Open Design) |
 | 已有 `spec.md` + 设计稿 | 该定技术了 | **`tech-spec`** → 一步出技术方案 + 落地计划:调研选型 + 架构 + 数据模型 + 接口契约 + 四维自检 →(确认门 1)→ tasks.md + plan.md →(确认门 2)→ 交开发 |
-| 已有技术方案 + 计划,两道门都过了 | 该动手了 | 移交实现(coding agent / worktree 并行执行) |
+| 已有技术方案 + 计划,两道门都过了 | 该动手了 | 移交实现(coding agent 按 plan.md 的 worktree 执行清单自动并行) |
 | 已有技术方案与计划,但计划要推倒重排 | 砍了范围 / 加了人手 / 并行线切错 | `gen-plan` → 只重写 tasks.md + plan.md 的执行计划段 |
 | 用户想一把跑完 / 不确定规模 | 需要编排 | `sdd-orchestrate`(它来判档 + 串 gate) |
 

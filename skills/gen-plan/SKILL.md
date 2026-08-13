@@ -94,7 +94,7 @@ spec 片段:
 
 plan.md 不是写完就完,它直接驱动跑:
 
-- 批次 1 的每条 `[P]` 开一棵 worktree:`git worktree add ../feat-auth -b feat-auth`,三条线用 `claude --worktree` / Cmux 各跑一个 agent。
+- 批次 1 的每条 `[P]` 一条并行线,一棵 worktree。**树不由用户手建**:按 tech-spec「并行执行编排」那节的清单格式(worktree 目录 / 分支名 / 文件集合 / 任务 / 完成判据 / 合并顺序)排好,由 coding agent 自动建树、派活、跑判据、按序合并、收树。当前平台探不到并发能力就降级串行,产出不变,并明确告诉用户降级了。
 - **批次间是 gate**:批 1 三棵都审过、合进主干,才开批 2。
 - **关键路径**(T1 -> T4)告诉你"最快多久";想提速,要么并行化、要么拆短关键路径上的任务。
 - **既有技术方案是硬约束**:重排出来的任务必须与 tech-spec 定下的架构、契约、数据模型对得上。对不上说明方案要改,那就回 tech-spec,不要在这里偷偷改技术。
@@ -112,11 +112,11 @@ node validate-plan.mjs docs/sdd/<slug>/
 ## HARD-GATE
 
 - **自检覆盖率**:贴「AC -> task」对照,缺口显式标。
-- `tasks.md` + `plan.md` 给用户批准,**才**移交实现(coding agent / worktree 并行执行)。
+- `tasks.md` + `plan.md` 给用户批准,**才**移交实现。批准的是两件事:计划本身,以及并行方案(几条线、每条动哪些文件);之后由 coding agent 按清单自动开 worktree,用户不敲 git 命令。
 
 ## 在 sdd-suite 里的位置
 
-主流程是四步:`discover-spec`(需求) -> 外部设计工具(设计稿) -> **`tech-spec`(技术方案 + 计划,含两道确认门)** -> coding agent / worktree 并行执行。
+主流程是四步:`discover-spec`(需求) -> 外部设计工具(设计稿) -> **`tech-spec`(技术方案 + 计划 + 并行执行编排,含两道确认门)** -> coding agent 按清单自动开 worktree 并行执行。
 
 **`gen-plan` 不在这条线上**,它是挂在旁边的重排工具:计划要推倒重来时才调它,调完仍走同一道用户确认门再移交开发。
 
