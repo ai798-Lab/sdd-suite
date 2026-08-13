@@ -117,11 +117,29 @@ if (!/(页面与功能|页面清单|页面列表|屏清单|page inventory|有哪
   warnings.push('缺「页面与功能清单」段:设计工具需要它(有哪些页 + 每页功能 + 状态),见 SKILL.md 必含段 5。');
 }
 
-// --- 11. 核心技术实现方案(warning)---
-if (!/(技术实现|技术方案|核心技术|技术选型|技术栈|架构|tech stack)/i.test(text)) {
-  warnings.push('缺「核心技术实现方案」段:小白需要架构 + 复用的 GitHub 项目 + API 服务选型(见 references/tech-and-reuse.md)。');
-} else if (!/(github\.com|https?:\/\/)/i.test(text)) {
-  warnings.push('技术方案疑似没有真实链接:复用的 GitHub 项目 / API 服务要给可点链接,别凭空编(见 references/tech-and-reuse.md 铁规 2)。');
+// --- 11. 技术可行性初判(warning)---
+// 只查「这一步该有的」:段在不在 + 有没有逐功能给难度量级。
+// 架构 / 选型 / 真实链接是 tech-spec 的活,这里不要,要了就是逼 spec 越界。
+const FEASIBILITY = /(技术可行性初判|可行性初判|技术可行性|技术预判)/;
+const isFeasHeader = (ln) => FEASIBILITY.test(ln) && (/^#{1,6}\s/.test(ln) || /^\s*\*{2}[^*]+\*{2}\s*$/.test(ln));
+const feasStart = lines.findIndex(isFeasHeader);
+if (feasStart === -1) {
+  warnings.push('缺「技术可行性初判」段:每个功能要一句话说清靠什么实现、有没有现成轮子、难度量级,用来挡下做不了或做不起的功能(见 SKILL.md 必含段 8)。');
+} else {
+  const level = (lines[feasStart].match(/^#+/) || ['###'])[0].length;
+  let feasEnd = lines.length;
+  for (let j = feasStart + 1; j < lines.length; j++) {
+    const m = lines[j].match(/^(#{1,6})\s/);
+    if (m && m[1].length <= level) { feasEnd = j; break; }
+  }
+  const body = lines.slice(feasStart + 1, feasEnd);
+  const content = body.filter((l) => l.trim() && !/^[#>|\-\s:]*$/.test(l));
+  const hasGrade = /(难度|量级|复杂度|工作量|人天|简单|中等|复杂|现成|轮子|自己写)/.test(body.join('\n'));
+  if (content.length === 0) {
+    warnings.push('「技术可行性初判」段是空的:哪怕一句"全靠现成轮子,难度低"也要写,否则做不了的功能会一路漏到 tech-spec。');
+  } else if (!hasGrade) {
+    warnings.push('「技术可行性初判」没看到难度量级:逐个功能给"靠什么实现 + 有没有现成轮子 + 难度(低/中/高)",别只写一句"技术上没问题"。');
+  }
 }
 
 warnings.forEach((w) => console.log(`⚠️  ${w}`));
