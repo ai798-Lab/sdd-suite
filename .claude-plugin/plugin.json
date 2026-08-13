@@ -1,7 +1,7 @@
 {
   "name": "sdd-suite",
-  "version": "0.6.0",
-  "description": "spec 为中心的 SDD skill 套件:把模糊想法逼成一份够厚的 spec.md(需求 + 页面与功能),设计交外部 AI 工具,tech-spec 一步出技术方案 + 可并行执行的计划 + worktree 并行执行编排(含两道用户确认门),开发交 coding agent 照单自动开树跑;gen-plan 作为独立重排工具。",
+  "version": "0.7.0",
+  "description": "spec 为中心的 SDD skill 套件:把模糊想法逼成一份够厚的 spec.md(需求 + 页面与功能,交人之前先过五视角自我审稿),设计交外部 AI 工具,tech-spec 一步出技术方案 + 可并行执行的计划 + worktree 并行执行编排(含两道用户确认门),开发交 coding agent 照单自动开树跑;gen-plan 作为独立重排工具。",
   "author": {
     "name": "ZOPC"
   },
