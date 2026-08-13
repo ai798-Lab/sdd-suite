@@ -22,41 +22,66 @@ AI 写代码、AI 出设计稿,已经不是瓶颈了。**瓶颈是你没想清�
  │
  ▼  sdd-router  判断你在哪一步、送进对的门
  │
- ▼  discover-spec ─────────► spec.md      ★ 主角:一份够厚的需求 + 方案
+ ▼  discover-spec ─────────► spec.md        需求:做什么、给谁、凭什么算做完
  │                            ⏸ 你 review、点头
  │
- ├─ 设计 ── spec.md + 风格参考 ─► Claude Design / Open Design / Codex Product Design ─► 设计稿
+ ▼  设计 ── spec + 参考 design.md + 风格偏好 ─► Codex Product Design / Open Design ─► design.md + 设计稿
  │
- ▼  计划 ── gen-plan ─► tasks.md + plan.md   ← 多数项目走这条:拆成可并行执行的开发计划
- │            └ 复杂 / 团队项目:先 tech-spec 出 ADR / 数据模型 / 契约,再回 gen-plan 编排
+ ▼  tech-spec ────────────► 技术方案         架构 / 复用清单 / 数据模型 / 接口契约 + 四维自检
  │
- ▼  开发 ── spec.md(+ 设计稿 + tasks/plan)─► coding agent / worktree 并行执行
+ ▼  gen-plan ─────────────► tasks.md + plan.md   排期:串行、并行、依赖
+ │
+ ▼  开发 ── 全部文件 ─► coding agent / worktree 并行执行
 ```
 
-**关键:spec.md 是中心,不是流水线的第一节。** 写完它,设计、技术、开发都从它分叉出去——设计交给外部 AI 设计工具,开发交给 coding agent,技术方案只在复杂项目才单独做。
+**关键:顺序不能颠倒。** 需求定了才知道要设计什么;设计定了才知道要几个接口、什么数据模型;技术方案定了才知道任务怎么拆、什么能并行。先定技术栈再画页面,一定返工。
 
 ## 写完 spec 之后,下一步怎么接
 
 ### 出设计稿(每个 web/App 项目都要)
 
+两条路,差别只在一个输入:**有没有参考**。执行工具与产出相同。
+
 ```
-spec.md  +  一个风格参考(找张喜欢的图 / 一句话描述调性)
+路径 A(推荐)  spec.md + 参考 design.md + 你的风格偏好
+路径 B         spec.md + 你的风格偏好 + 一个设计 skill
    │
-   ▼  喂给 Claude Design / Open Design / Codex Product Design(或 v0 / Figma Make)
-设计稿 / design.md
+   ▼  Codex Product Design 插件 / Open Design(+ 本地 coding agent)
+design.md + 设计稿
 ```
 
-- **为什么不在 suite 里手写 design.md**:这些 AI 设计工具直接生成真实视觉,比一份 markdown token 表强得多;而 spec 已经给了它们要的一切(页面与功能清单 + 品牌 + 真实文案)。你只需再补一个**风格参考**——视觉品味是 spec 不该管、也管不了的。
+**DESIGN.md 是现在的事实标准**:一份描述配色 / 字体 / 间距 / 圆角 / 动效的 markdown,Claude Code、Codex、Cursor 都能直接读。
+
+参考 design.md 从哪来:
+- 货架上挑:[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)(按行业分类,免费)、[getdesign.md](https://getdesign.md/)(300+ 站点带设计理由)
+- 自己扒一份:[designmd.me](https://designmd.me/)(粘 URL 抽真实 computed style)、[design-md-chrome](https://github.com/bergside/design-md-chrome)(Chrome 扩展,免费)
+
+路径 B 的设计 skill 三选一:[frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md)(先想再写,Anthropic 官方)、[UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)(84 风格 / 192 配色)、[Impeccable](https://github.com/pbakaus/impeccable)(59 条反模式 lint)。
+
+找真实参考:[Mobbin](https://mobbin.com/)(60 万+ 真实产品截屏,有 MCP 可让 agent 直接检索)。
+
+- **为什么不在 suite 里手写 design.md**:AI 设计工具直接生成真实视觉,比手写 token 表强;spec 已经给了它们要的一切(页面与功能清单 + 品牌 + 真实文案),你只需再补参考与偏好——视觉品味是 spec 不该管、也管不了的。
 - **拿到产出后,对照这张反 AI-slop 清单过一眼**(命中就让工具重做或自己调):
   - AI 默认靛蓝 / 紫渐变(`#6366f1` 一类)、SaaS 模板味的蓝→青渐变
   - 纯黑 `#000` 做正文、字号层级糊成一团
   - 无意义 emoji 当装饰、假指标(无来源的 "10x")、千篇一律三卡片 + 渐变大标题
   - 所有东西等距、没主次、没呼吸
 
+### 出技术方案(设计稿之后、排期之前)
+
+```
+spec.md + 设计稿
+   │
+   ▼  tech-spec
+技术选型矩阵 + ADR + data-model.md + contracts/ + 四维自检
+```
+
+tech-spec 做三件 spec 不做的事:**主动去 GitHub / WebSearch 调研现成项目与 API 服务**(不造轮子、引真实链接、带定价量级)、把方向落成**数据模型与接口契约**(契约先行,前后端才能真并行)、过**四维闸门自检**(上线门槛 / 成本曲线 / 体验与性能 / 稳定性,见 `skills/tech-spec/references/tech-eval-checklist.md`)。
+
 ### 出开发计划(多数项目都要)
 
 ```
-spec.md(+ 设计稿)
+spec.md + 设计稿 + 技术方案
    │
    ▼  gen-plan
 tasks.md  ← 独立、清晰、可验证的原子任务清单(每条精确到文件路径 + 能跑的验收命令 + 回指 AC)
@@ -71,7 +96,7 @@ plan.md   ← 基于任务依赖的并行 [P] / 串行编排 + 批次 gate + 关
 
 新版 spec 已经自带一段「核心技术实现方案」(架构方向 + 复用的真实 GitHub 项目 + API 选型)。**对 solo / 用 AI 写代码的人,这一段通常就够直接喂 coding agent 了。**
 
-只有当项目复杂、多人协作、要把架构白纸黑字定死时,才用 `tech-spec` 把它**深化**成 ADR / 数据模型 / 接口契约 / 原子任务,再回 `gen-plan` 编排执行。
+设计稿出来之后,用 `tech-spec` 做技术方案:调研现成轮子、定架构与选型、出数据模型与接口契约、过四维自检,再回 `gen-plan` 编排执行。深度按项目复杂度调:单人小项目做到「架构 + 复用清单 + 关键接口」即可,多人 / 复杂项目才做到 ADR 与完整契约。
 
 ### 开发
 
@@ -84,7 +109,7 @@ plan.md   ← 基于任务依赖的并行 [P] / 串行编排 + 批次 gate + 关
 | `discover-spec` ★ | **主角**。把想法逼成可落地的 spec | `spec.md`(下方详解) |
 | `sdd-router` | 入口。判断你在第几步,送进对的门 | 路由到对的 skill |
 | `gen-plan` | **多数项目的计划层**。把 spec(+设计稿)拆成独立可验证的原子任务 + 并行/串行编排 | `tasks.md` + `plan.md` |
-| `tech-spec`(可选·重档) | 只有复杂 / 团队项目才用:把技术方向深化成架构蓝图,再回 gen-plan 编排 | `plan.md` / `data-model.md` / `contracts/` / `tasks.md` |
+| `tech-spec` | 设计稿之后做技术方案:调研现成轮子 + 架构选型 + 数据模型 + 接口契约 + 四维自检 | `plan.md` / `data-model.md` / `contracts/` / `tasks.md` |
 | `sdd-orchestrate` | 总控:右尺寸判档 + 串成带门流程 | 一条 gated pipeline |
 | `CONSTITUTION.md` | 常驻铁律:暴露而非假设 / 必停 review / 拒绝假大空 / 不擅自抽象 | 常驻约束 |
 
@@ -155,7 +180,7 @@ for s in sdd-suite/skills/*/; do ln -s "$(pwd)/$s" ~/.claude/skills/"$(basename 
 /sdd-suite:discover-spec 一个给独立开发者记账的工具    # ① 从零 idea     → spec.md
 /sdd-suite:discover-spec 复刻 Truity 做个在线测试站     # ① 对标已验证产品 → spec.md
 /sdd-suite:gen-plan                                    # ② spec 批准后   → tasks.md + plan.md
-/sdd-suite:tech-spec                                   # 复杂项目才用    → 架构蓝图
+/sdd-suite:tech-spec                                   # 设计稿之后      → 技术方案
 ```
 - 也可以**不打命令**,直接说"帮我写个 X 的 spec",`discover-spec` 会按 description 自动触发。
 - 嫌前缀长、或想在 Codex / opencode / Kimi / pi 上也能调起?见下方「短名命令 · 一键装到各 agent」。
@@ -234,7 +259,7 @@ skill 给推荐、把最脆弱的假设指给你看,但取舍由你拍板。
 
 **大胆承认的局限:**
 - **这是个人作品**,集开源之长 + 原创,**没有大规模实战验证**。别当圣经。
-- **`discover-spec` 是被深度打磨过的那一个**;`tech-spec` 是"复杂项目才用"的可选重档,**没怎么 dogfood 过**,当心。
+- **`discover-spec` 是被深度打磨过的那一个**;`tech-spec` 在 v0.5 才补上调研 pass 与四维自检,**实战验证还少**,用的时候多盯一眼产出。
 - **设计这一环依赖外部工具的质量**(Claude Design / Open Design 等)。suite 只保证把 spec 喂好,出来好不好看,看工具 + 你给的风格参考。
 - **gate 靠你**:它会停下来请你 review,但你不 review、催它往下冲,它也会冲。纪律最终在人。
 
