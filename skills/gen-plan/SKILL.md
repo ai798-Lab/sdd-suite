@@ -1,22 +1,24 @@
 ---
 name: gen-plan
-description: 把已批准的 spec.md(+ 可选设计稿)生成一份能直接照做的开发计划:独立、清晰、可验证的原子 Task 清单(tasks.md)+ 基于任务依赖的并行 [P] / 串行执行编排(plan.md)。比 tech-spec 轻:不做架构 ADR / 数据模型 / 接口契约,只聚焦"把需求拆成能派给 coding agent 的任务 + 排好执行顺序"。Use when a spec.md (and optional design) exists and you need an actionable, verifiable task list plus a parallel/serial execution plan before coding, the common solo/medium case that skips the heavy tech-spec. 触发词:开发计划 / 拆任务 / task 清单 / tasks.md / 并行串行 / 排开发顺序 / 把 spec 变成计划 / plan.md / 怎么开干 / 排开发。需要 spec.md 作为输入。
+description: 单独重排开发计划的工具(不在主流程里)。主流程的排期已经并进 tech-spec,一步出技术方案 + 计划;本 skill 用于「技术方案已经有了、只想重新拆任务或调整计划」的场景:砍了范围、加了人手、某条并行线切错了、想换一种批次划分。产出独立、清晰、可验证的原子 Task 清单(tasks.md)+ 基于任务依赖的并行 [P] / 串行执行编排(plan.md),不碰架构 ADR / 数据模型 / 接口契约。Use only for re-planning when a technical solution already exists and the task breakdown or execution order needs to be redone, not as the default step after spec. 触发词:重新排期 / 重排计划 / 重新拆任务 / 调整计划 / 换个批次划分 / 只要 tasks.md / 只要 plan.md。需要 spec.md 作为输入,技术方案已存在时一并读入。
 ---
 
-# gen-plan · 从 spec + 设计稿,生成能照做的开发计划
+# gen-plan · 单独重排开发计划
 
-把一份够厚的 `spec.md`(+ 可选设计稿)落成两个产物:
+把一份够厚的 `spec.md`(+ 已有技术方案 / 设计稿)落成两个产物:
 
 - `tasks.md`:独立、清晰、可验证的原子任务清单
 - `plan.md`:基于任务依赖排出的并行 `[P]` / 串行执行顺序
 
-**定位**:tech-spec 的轻量版。tech-spec 适合复杂 / 团队项目(要 ADR + 数据模型 + 接口契约);gen-plan 只做**任务拆解 + 执行编排**,适合最常见的"spec / design 都有了,直接想要一份能派活的计划"。需要架构深度时再上 tech-spec,本 skill 不碰架构 / 数据模型 / 契约。
+**定位:这不是主流程里的一步。** 排期职责已经并入 `tech-spec`(它一步做完技术方案 + 计划,中间两道确认门)。本 skill 留给一种场景:**方案不变,只想重来一遍排期**。典型触发是砍了范围、加了人手、某条并行线被证明切错了、想换一种批次划分。
+
+所以它只做**任务拆解 + 执行编排**,不碰架构 / 数据模型 / 接口契约,那些是 tech-spec 的产物,重排时原样沿用、不重写。
 
 ## 启动
 
 1. 读 `CONSTITUTION.md`(若在 sdd-suite 内运行)。
-2. **强制引用**:唯一合法输入是已批准的 `spec.md`(设计稿可选)。无 spec.md 则停下,回 discover-spec。
-3. 产出落到 `docs/sdd/<slug>/`:`tasks.md`、`plan.md`。文首写 `> source: docs/sdd/<slug>/spec.md`。
+2. **强制引用**:已批准的 `spec.md` 是必需输入;`docs/sdd/<slug>/plan.md` 里已有的技术方案段(复用清单 / 选型 / 数据模型 / 契约)一并读入,当作既定约束。无 spec.md 则停下,回 discover-spec。
+3. 产出落到 `docs/sdd/<slug>/`:重写 `tasks.md`,以及 `plan.md` 的「执行计划」段。**技术方案段原样保留,不许覆盖。** 文首写 `> source: docs/sdd/<slug>/spec.md`。
 
 ## 第一步 · 立一把尺子:一条好 Task 的四条标准
 
@@ -95,7 +97,7 @@ plan.md 不是写完就完,它直接驱动跑:
 - 批次 1 的每条 `[P]` 开一棵 worktree:`git worktree add ../feat-auth -b feat-auth`,三条线用 `claude --worktree` / Cmux 各跑一个 agent。
 - **批次间是 gate**:批 1 三棵都审过、合进主干,才开批 2。
 - **关键路径**(T1 -> T4)告诉你"最快多久";想提速,要么并行化、要么拆短关键路径上的任务。
-- **接 tech-spec**:复杂项目先 tech-spec 出 ADR / 数据模型 / 契约,再回 gen-plan 编排;简单项目直接 gen-plan -> 并行跑。
+- **既有技术方案是硬约束**:重排出来的任务必须与 tech-spec 定下的架构、契约、数据模型对得上。对不上说明方案要改,那就回 tech-spec,不要在这里偷偷改技术。
 
 ## 移交前自检:跑 validate-plan.mjs
 
@@ -114,6 +116,8 @@ node validate-plan.mjs docs/sdd/<slug>/
 
 ## 在 sdd-suite 里的位置
 
-`discover-spec`(需求) -> 外部设计工具(设计稿) -> **`gen-plan`(轻量计划,多数项目)** 或 `tech-spec`(深度蓝图,复杂项目) -> coding agent / worktree 并行执行。
+主流程是四步:`discover-spec`(需求) -> 外部设计工具(设计稿) -> **`tech-spec`(技术方案 + 计划,含两道确认门)** -> coding agent / worktree 并行执行。
+
+**`gen-plan` 不在这条线上**,它是挂在旁边的重排工具:计划要推倒重来时才调它,调完仍走同一道用户确认门再移交开发。
 
 也能脱离 sdd-suite 单独用:手上有一份说清 WHAT/WHY + 功能清单 + AC 的需求文档就能跑。

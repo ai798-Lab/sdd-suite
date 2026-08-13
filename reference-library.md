@@ -1,6 +1,6 @@
 # 参考库 · 9 个大师级 AI-Skill 仓库
 
-本套件的方法来源。给学员对照学习用——不是让你全装,而是知道"哪个长处来自哪里、想深挖去哪看"。
+本套件的方法来源。给学员对照学习用,不是让你全装,而是知道"哪个长处来自哪里、想深挖去哪看"。
 评级:强 / 中 / 弱 / 无,指对"需求 · 设计 · 技术"三阶段的覆盖。
 
 | 仓库 | 物种 | 需求 / 设计 / 技术 | 最该学的一点 |
@@ -26,4 +26,4 @@
 设计有 4 个强 repo、需求有 3 个,但"为用户从零产出系统架构方案"几乎无人做透。
 所以本套件的 **tech-spec 是原创为主**,以 SDD 方法论补九家的共同空洞。
 
-> v0.3 更新:`design-spec` 已移除——设计交给外部 AI 设计工具(Claude Design / Open Design / Codex Product Design),给它 `spec + 风格参考` 即可。上面那几个设计 repo(impeccable / open-design / awesome-design-md)现作为"设计工具背后的方法论"参考保留,它们的反 slop / 闭词表思路已 folded 进 README 的设计交接步。
+> v0.3 更新:`design-spec` 已移除:设计交给外部 AI 设计工具(Claude Design / Open Design / Codex Product Design),给它 `spec + 风格参考` 即可。上面那几个设计 repo(impeccable / open-design / awesome-design-md)现作为"设计工具背后的方法论"参考保留,它们的反 slop / 闭词表思路已 folded 进 README 的设计交接步。

@@ -7,8 +7,8 @@
     {
       "name": "sdd-suite",
       "source": "./",
-      "description": "spec 为中心的 SDD skill 套件:厚 spec.md → 外部设计工具 + gen-plan 开发计划 + coding agent,tech-spec 可选。",
-      "version": "0.4.0"
+      "description": "spec 为中心的 SDD skill 套件:厚 spec.md → 外部设计工具 → tech-spec 出技术方案 + 计划(两道确认门)→ coding agent。",
+      "version": "0.5.0"
     }
   ]
 }

@@ -1,7 +1,7 @@
 # Phase -1 Gates · 动手前的三道门
 
 借 SDD / spec-kit 的 constitution gates。在写 plan、引入任何抽象 / 框架 / 依赖**之前**,必须书面过这三问。
-默认拒绝复杂度——过不了门的,不许进 plan。
+默认拒绝复杂度:过不了门的,不许进 plan。
 
 ## Gate 1 · Simplicity(更简单行不行)
 - 问:能不能用更少的部件、更少的层做到同样的事?

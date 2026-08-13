@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # sdd-suite 跨平台命令分发安装器
-# 把 aliases/*.md(ohspec / genplan / design)铺到本机各 coding agent 的
+# 把 aliases/*.md(ohspec / design / techspec / genplan)铺到本机各 coding agent 的
 # "用户手动触发命令"目录,格式不兼容的做转换。
 #
 # 探测逻辑参考 goalkeeper:command -v 检测 bin + 查配置目录是否存在。

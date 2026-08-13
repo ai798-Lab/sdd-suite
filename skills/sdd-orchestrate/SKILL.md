@@ -1,6 +1,6 @@
 ---
 name: sdd-orchestrate
-description: SDD 总控。按改动规模(blast-radius)判档,决定走轻档直接动手,还是把 discover-spec →(spec + 风格参考 → 外部设计工具)→(可选)tech-spec 串成带 review gate 的流程,并做跨阶段对抗式评审。Use when the user wants to run the whole build pipeline end to end, or to decide how heavy a process a change deserves. 触发词:整个流程 / 端到端 / 一把跑完 / 这个改动要走多重 / 编排 / orchestrate / 全流程 / 帮我从头到尾。
+description: SDD 总控。按改动规模(blast-radius)判档,决定走轻档直接动手,还是把 discover-spec →(spec + 风格参考 → 外部设计工具)→ tech-spec(技术方案 + 落地计划,自带两道确认门)串成带 review gate 的流程,并做跨阶段对抗式评审。Use when the user wants to run the whole build pipeline end to end, or to decide how heavy a process a change deserves. 触发词:整个流程 / 端到端 / 一把跑完 / 这个改动要走多重 / 编排 / orchestrate / 全流程 / 帮我从头到尾。
 ---
 
 # sdd-orchestrate · 三阶段总控
@@ -23,14 +23,16 @@ description: SDD 总控。按改动规模(blast-radius)判档,决定走轻档直
 | 设计是否模糊 | 清晰 | 模糊 / 全新 |
 
 - **trivial 档**:三信号全轻 → 允许跳过派生文档,直接动手(给逃生口,别过度工程)。
-- **standard 档**:中等 → 走 spec;UI 出设计交外部工具;一般不必 tech-spec,spec 直接交 coding agent。
-- **large 档**:任一为重 → spec + tech-spec(深度技术蓝图),UI 交外部设计工具;关键 gate 不可压缩。
+- **standard 档**:中等 → spec → UI 出设计交外部工具 → `tech-spec`(深度按需收:做到「架构 + 复用清单 + 关键接口 + 任务计划」即可,ADR 与完整契约可略)。
+- **large 档**:任一为重 → spec → 外部设计工具 → `tech-spec` 做满(ADR + 完整数据模型与契约);关键 gate 不可压缩。
+
+`tech-spec` 自带两道用户确认门(技术方案确认 / 计划确认),编排时把它们当作本流水线的 gate,不要另起一道重复的门。
 
 明确告诉用户判到哪档、为什么、将跑哪几段(phase mask)。
 
 ## 串流水线(gated pipeline)
 
-按 phase mask 依次:`discover-spec` →(spec + 风格参考 → 外部 AI 设计工具)→(复杂项目才)`tech-spec`,每段之间:
+按 phase mask 依次:`discover-spec` →(spec + 风格参考 → 外部 AI 设计工具)→ `tech-spec`(技术方案 + 落地计划,一步做完)→ 移交实现,每段之间:
 
 - 产物落 `docs/sdd/<slug>/`,**停下请用户 review + 批准**(HARD-GATE,不可压缩)。
 - 下游只接受上游已批准的产物为输入。
