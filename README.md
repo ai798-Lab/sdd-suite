@@ -172,14 +172,14 @@ discover-spec 的产出不是一篇散文需求,是一份**结构化、可验收
 
 ### 方式一 · Claude Code 插件(推荐)
 ```
-/plugin marketplace add Sin10874/sdd-suite
+/plugin marketplace add ai798-Lab/sdd-suite
 /plugin install sdd-suite@sdd-suite
 ```
 
 ### 方式二 · Codex CLI
 Codex 原生读 `SKILL.md`(无需 `openai.yaml`)。把 skills 软链到 Codex 全局 skills 目录:
 ```bash
-git clone git@github.com:Sin10874/sdd-suite.git
+git clone git@github.com:ai798-Lab/sdd-suite.git
 mkdir -p ~/.codex/skills
 for s in sdd-suite/skills/*/; do ln -s "$(pwd)/$s" ~/.codex/skills/"$(basename "$s")"; done
 ```
@@ -187,11 +187,13 @@ for s in sdd-suite/skills/*/; do ln -s "$(pwd)/$s" ~/.codex/skills/"$(basename "
 
 ### 方式三 · 手动软链(任意读 ~/.claude/skills 的 agent)
 ```bash
-git clone git@github.com:Sin10874/sdd-suite.git
+git clone git@github.com:ai798-Lab/sdd-suite.git
 for s in sdd-suite/skills/*/; do ln -s "$(pwd)/$s" ~/.claude/skills/"$(basename "$s")"; done
 ```
 
 > 三种装法装的是同一批 `SKILL.md`,纯 markdown,不绑定某个 agent。
+
+> **软链装法要多留一句心**:`CONSTITUTION.md` 在仓库根,不在 `skills/` 里,所以软链过去的 skill 目录里看不到它。每个 skill 的启动动作第一步都是读它,读不到就只剩各 skill 的内置规则,**常驻铁律(含第 7 条实现阶梯)不生效**。两个办法:装方式一的插件(插件根就是仓库根,直接读得到),或者在会话里把 clone 目录的绝对路径告诉 agent 一次。
 
 ## 快速开始
 
